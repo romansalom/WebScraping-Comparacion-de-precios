@@ -1,0 +1,26 @@
+.card-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    /* Asegura que el contenido se distribuya uniformemente */
+    height: 100%;
+    /* Ocupa todo el espacio vertical disponible */
+}
+
+.card-image {
+    width: 100%;
+    /* Ocupa todo el ancho disponible */
+    object-fit: cover;
+    /* Cubre el área sin perder las proporciones */
+    aspect-ratio: 1 / 1;
+    /* Mantiene la relación de aspecto */
+}
+
+.card-content {
+    flex-grow: 1;
+    /* Permite que el contenido crezca para llenar el espacio */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    /* Distribuye el espacio verticalmente */
+}
