@@ -1,24 +1,20 @@
 const puppeteer = require('puppeteer');
 
-// Define la lista de URLs que quieres visitar
-const urls = [
-  'https://www.grid.com.ar/botitas/zapatillas/jordan?initialMap=b&initialQuery=jordan&map=category-2,category-2,brand&order=OrderByReleaseDateDESC&page=1',
-  'https://www.grid.com.ar/botitas/zapatillas/jordan?initialMap=b&initialQuery=jordan&map=category-2,category-2,brand&order=OrderByReleaseDateDESC&page=2',
-
-  // Agrega más URLs aquí según sea necesario
-];
-
 (async () => {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
+  let pageIndex = 1;
+  let hasProducts = true;
 
-  for (let i = 0; i < urls.length; i++) {
-    const url = urls[i];
+  while (hasProducts) {
+    const url = `https://www.grid.com.ar/botitas/zapatillas/jordan?initialMap=b&initialQuery=jordan&map=category-2,category-2,brand&order=OrderByReleaseDateDESC&page=${pageIndex}`;
     try {
-      await page.goto(url);
+      await page.goto(url, { waitUntil: 'networkidle2' });
 
       // Esperar a que los elementos estén presentes en la página
-      await page.waitForSelector('.vtex-product-summary-2-x-element');
+      await page.waitForSelector('.vtex-product-summary-2-x-element', {
+        timeout: 5000,
+      });
 
       const products = await page.evaluate(() => {
         const productElements = document.querySelectorAll(
@@ -57,12 +53,16 @@ const urls = [
         return productsArray;
       });
 
-      console.log(products);
-      console.log(products.length);
+      if (products.length === 0) {
+        hasProducts = false;
+        console.log('No se encontraron más productos.');
+      } else {
+        console.log(`Página ${pageIndex}:`, products);
+      }
+      pageIndex++;
     } catch (error) {
       console.error(`Error al procesar la URL ${url}: ${error}`);
-      // Si hay un error, continúa con la siguiente URL
-      continue;
+      hasProducts = false;
     }
   }
 
