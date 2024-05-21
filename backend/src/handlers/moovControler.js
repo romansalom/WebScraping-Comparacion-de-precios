@@ -8,7 +8,7 @@ const fetchProducts = async () => {
   const page = await browser.newPage();
   // Navega a la URL deseada
   await page.goto(
-    'https://www.moov.com.ar/buscar?q=zapatillas+jordan&start=0&sz=72'
+    'https://www.moov.com.ar/buscar?q=zapatillas+jordan&start=0&sz=100'
   );
 
   // Extrae la información de los productos

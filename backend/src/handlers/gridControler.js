@@ -1,7 +1,7 @@
-const puppeteer = require('puppeteer');
+const { chromium } = require('playwright');
 
 const scrapeProductsFromPage = async (page, url) => {
-  await page.goto(url, { waitUntil: 'networkidle2' });
+  await page.goto(url, { waitUntil: 'domcontentloaded' });
 
   await page.waitForSelector('.vtex-product-summary-2-x-element', {
     timeout: 10000,
@@ -47,10 +47,10 @@ const scrapeProductsFromPage = async (page, url) => {
   return products;
 };
 
-// Función para extraer información de productos de múltiples páginas
 const fetchProducts = async () => {
-  const browser = await puppeteer.launch();
-  const page = await browser.newPage();
+  const browser = await chromium.launch();
+  const context = await browser.newContext();
+  const page = await context.newPage();
   let pageIndex = 1;
   let hasProducts = true;
   let allProducts = [];

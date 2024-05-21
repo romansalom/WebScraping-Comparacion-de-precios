@@ -5,10 +5,11 @@ const { fetchProducts } = require('../handlers/moovControler.js'); //');
 router.get('/ruta', (req, res) => {
   res.send('Respuesta de la ruta');
 });
-router.get('/scrape-products', async (req, res) => {
+router.get('', async (req, res) => {
   try {
     const products = await fetchProducts();
     res.json(products);
+    console.log(products.length);
   } catch (error) {
     console.error('Error scraping products:', error);
     res.status(500).send('Error scraping products');
