@@ -4,9 +4,11 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import axios from 'axios';
 import '../MOOV/styles/moovCards.css';
-export default function CardsMoov() {
+
+export default function CardsMoov({ searchTerm }) {
   const [productos, setProductos] = useState([]);
-  const [isLoading, setIsLoading] = useState(true); // Add state for loading
+  const [isLoading, setIsLoading] = useState(true);
+  const [initialSlide, setInitialSlide] = useState(0); // Initialize initialSlide to 0
 
   useEffect(() => {
     const url = 'http://localhost:3000/moov';
@@ -15,13 +17,17 @@ export default function CardsMoov() {
       .get(url)
       .then((response) => {
         setProductos(response.data);
-        setIsLoading(false); // Set loading to false when data is fetched
+        setIsLoading(false);
+        // Set initialSlide to 0 whenever productos change
+        setInitialSlide(0);
       })
       .catch((error) => {
         console.error(error);
       });
-  }, []);
+  }, [searchTerm]); // Trigger useEffect whenever searchTerm changes
+
   const settings = {
+    initialSlide: initialSlide,
     infinite: true,
     speed: 500,
     slidesToShow: 4,
@@ -47,12 +53,18 @@ export default function CardsMoov() {
       },
     ],
   };
+
   const truncateTitle = (title) => {
     if (title.length > 25) {
       return title.slice(0, 23) + '...'; // Truncate to 27 characters and add ellipsis
     }
     return title;
   };
+
+  const filteredProductos = productos.filter((producto) =>
+    producto.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <section className="text-gray-600 body-font">
       <div className="container px-5 py-12 mx-auto">
@@ -65,11 +77,11 @@ export default function CardsMoov() {
           </div>
         </div>
         <div className="slider-container">
-          {isLoading ? ( // Conditionally render loading indicator
+          {isLoading ? (
             <div className="loading">Cargando...</div>
           ) : (
             <Slider {...settings}>
-              {productos.map((producto, index) => (
+              {filteredProductos.map((producto, index) => (
                 <div key={index} className="p-4">
                   <div className="card-container w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
                     <img

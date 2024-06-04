@@ -1,14 +1,17 @@
+import { useState, useEffect } from 'react';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import '../DIGITALSPORT/styles/digitalSportCards.css';
 import axios from 'axios';
+import '../DIGITALSPORT/styles/digitalSportCards.css';
 
-import { useState, useEffect } from 'react';
-
-export default function CardsDigitalSport() {
+export default function CardsDigitalSport({ searchTerm }) {
   const [productos, setProductos] = useState([]);
-  const [isLoading, setIsLoading] = useState(true); // Add state for loading
+  const [isLoading, setIsLoading] = useState(true);
+  const [initialSlide, setInitialSlide] = useState(0);
+  const filteredProductos = productos.filter((producto) =>
+    producto.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   useEffect(() => {
     const url = 'http://localhost:3000/digital';
@@ -16,9 +19,9 @@ export default function CardsDigitalSport() {
     axios
       .get(url)
       .then((response) => {
-        console.log(response.data);
         setProductos(response.data);
-        setIsLoading(false); // Set loading to false when data is fetched
+        setIsLoading(false);
+        setInitialSlide(0);
       })
       .catch((error) => {
         console.error(error);
@@ -26,16 +29,17 @@ export default function CardsDigitalSport() {
   }, []);
 
   const settings = {
-    infinite: true,
+    initialSlide: initialSlide,
+    infinite: false,
     speed: 500,
-    slidesToShow: 4,
-    slidesToScroll: 2,
+    slidesToShow: Math.min(filteredProductos.length, 4), // Mostrar el número mínimo de tarjetas o máximo 4
+    slidesToScroll: Math.min(filteredProductos.length, 2), // Desplazar el número mínimo de tarjetas o máximo 2
     responsive: [
       {
         breakpoint: 1024,
         settings: {
-          slidesToShow: 2,
-          slidesToScroll: 1,
+          slidesToShow: Math.min(filteredProductos.length, 2),
+          slidesToScroll: Math.min(filteredProductos.length, 1),
           infinite: true,
           dots: false,
         },
@@ -43,17 +47,18 @@ export default function CardsDigitalSport() {
       {
         breakpoint: 768,
         settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
+          slidesToShow: Math.min(filteredProductos.length, 1),
+          slidesToScroll: Math.min(filteredProductos.length, 1),
           infinite: true,
           dots: false,
         },
       },
     ],
   };
+
   const truncateTitle = (title) => {
     if (title.length > 25) {
-      return title.slice(0, 23) + '...'; // Truncate to 27 characters and add ellipsis
+      return title.slice(0, 23) + '...';
     }
     return title;
   };
@@ -71,11 +76,11 @@ export default function CardsDigitalSport() {
             </div>
           </div>
           <div className="slider-container">
-            {isLoading ? ( // Conditionally render loading indicator
+            {isLoading ? (
               <div className="loading">Cargando...</div>
             ) : (
               <Slider {...settings}>
-                {productos.map((producto, index) => (
+                {filteredProductos.map((producto, index) => (
                   <div key={index} className="p-4">
                     <div className="card-container w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
                       <img
