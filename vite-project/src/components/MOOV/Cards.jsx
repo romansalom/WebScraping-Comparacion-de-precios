@@ -4,7 +4,6 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import axios from 'axios';
 import '../MOOV/styles/moovCards.css';
-
 export default function CardsMoov() {
   const [productos, setProductos] = useState([]);
   const [isLoading, setIsLoading] = useState(true); // Add state for loading
