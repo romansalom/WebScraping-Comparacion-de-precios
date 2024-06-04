@@ -7,23 +7,19 @@ const scrapeProductsFromPage = async (url) => {
   try {
     await page.goto(url, { waitUntil: 'domcontentloaded' });
 
-    // Esperar a que los elementos estén presentes en la página
+    // Wait for product elements
     await page.waitForSelector('.card');
 
-    // Función para hacer scroll automático
+    // Auto scroll function
     const autoScroll = async (page) => {
       await page.evaluate(async () => {
         await new Promise((resolve) => {
-          // Definir la distancia y el intervalo del scroll
           const distance = 100;
           const delay = 100;
 
-          // Función de scroll
           const scrollInterval = setInterval(() => {
-            // Scroll hacia abajo
             window.scrollBy(0, distance);
 
-            // Verificar si se ha llegado al final de la página
             if (
               document.body.scrollHeight <=
               window.innerHeight + window.scrollY
@@ -36,10 +32,10 @@ const scrapeProductsFromPage = async (url) => {
       });
     };
 
-    // Realizar scroll automático hasta el final de la página
+    // Scroll to the bottom
     await autoScroll(page);
 
-    // Extraer la información de los productos
+    // Extract product information
     const products = await page.evaluate(() => {
       const productElements = document.querySelectorAll('.card');
       const productsArray = [];
@@ -48,10 +44,10 @@ const scrapeProductsFromPage = async (url) => {
         const titleElement = productElement.querySelector('h3');
         const brandElement = productElement.querySelector('.brand');
         const priceElement = productElement.querySelector('.precio');
+        const imageElement = productElement.querySelector('.img'); // Image element selector
 
         let price = 'Precio no disponible';
         if (priceElement) {
-          // Remover el punto de los valores de precio
           price = priceElement.textContent.trim().replace('.', '');
         }
 
@@ -61,8 +57,14 @@ const scrapeProductsFromPage = async (url) => {
         const brand = brandElement
           ? brandElement.textContent.trim()
           : 'Sin marca';
+        const prefix = 'https://www.digitalsport.com.ar/';
 
-        productsArray.push({ title, brand, price });
+        const imageUrl = imageElement
+          ? `${prefix}${imageElement.getAttribute('src')}`
+          : '';
+        // Get image src attribute
+
+        productsArray.push({ title, brand, price, imageUrl }); // Add imageUrl to product object
       });
 
       return productsArray;
