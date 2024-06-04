@@ -20,9 +20,6 @@ const scrapeProductsFromPage = async (page, url) => {
         const priceElement = productElement.querySelector(
           '.vtex-product-summary-2-x-currencyInteger.vtex-product-summary-2-x-currencyInteger--product-box'
         );
-        const priceDecimalElement = productElement.querySelector(
-          '.vtex-product-summary-2-x-currencyFraction.vtex-product-summary-2-x-currencyFraction--product-box'
-        );
         const imageElement = productElement.querySelector(
           '.vtex-product-summary-2-x-imageNormal'
         );
@@ -30,20 +27,18 @@ const scrapeProductsFromPage = async (page, url) => {
         const title = titleElement
           ? titleElement.textContent.trim()
           : 'Sin título';
-        const price = priceElement
-          ? parseInt(priceElement.textContent.trim())
-          : 0;
-        const priceDecimal = priceDecimalElement
-          ? parseInt(priceDecimalElement.textContent.trim())
-          : 0;
+
+        // Convert integer to string and add ".999"
+        const priceText = `${parseInt(priceElement.textContent.trim())}.999`;
+
+        // Parse the combined string to a float with decimals
+        const price = parseFloat(priceText);
+
         const imageUrl = imageElement
           ? imageElement.getAttribute('src')
           : 'Imagen no encontrada';
 
-        // El precio total en centavos
-        const totalPrice = price * 100 + priceDecimal;
-
-        productsArray.push({ title, price: totalPrice, imageUrl });
+        productsArray.push({ title, price, imageUrl });
       });
 
       return productsArray;
