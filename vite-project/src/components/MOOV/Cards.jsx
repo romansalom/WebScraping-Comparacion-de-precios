@@ -47,6 +47,12 @@ export default function CardsMoov() {
       },
     ],
   };
+  const truncateTitle = (title) => {
+    if (title.length > 25) {
+      return title.slice(0, 23) + '...'; // Truncate to 27 characters and add ellipsis
+    }
+    return title;
+  };
   return (
     <section className="text-gray-600 body-font">
       <div className="container px-5 py-12 mx-auto">
@@ -74,7 +80,7 @@ export default function CardsMoov() {
                     <div className="card-content px-5 pb-5">
                       <a href="/">
                         <h5 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">
-                          {producto.title}
+                          {truncateTitle(producto.title)}
                         </h5>
                       </a>
                       <div className="flex items-center mt-2.5 mb-5">

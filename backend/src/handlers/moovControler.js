@@ -34,10 +34,7 @@ const fetchProducts = async () => {
         ? imageElement.getAttribute('src')
         : 'Image not found';
 
-      // Filter products based on title starting with "Zapatilla"
-      if (title.startsWith('Zapatilla')) {
-        items.push({ title, price, imageUrl });
-      }
+      items.push({ title, price, imageUrl });
     });
     return items;
   });
